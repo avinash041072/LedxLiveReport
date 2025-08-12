@@ -1,0 +1,76 @@
+﻿@model PaginatedList<LedxLiveReport.Models.VwPaidUsersLive>
+
+@{
+}
+
+<h1>Paid User</h1>
+<input type="button"
+       value="Refresh"
+       onclick="location.href='@Url.Action("Index", "PaidUsers")'" />
+<table class="table">
+    <thead>
+        <tr>
+
+
+            <th>Order Id</th>
+            <th>Name</th>
+            <th>UserId</th>
+            <th>Mobile No</th>
+            <th>UserEmail</th>
+        
+            <th>Discount Amt</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>OrderDate</th>
+            <th>OrderStatus</th>
+
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var userR in Model)
+        {
+            <tr>
+                @{
+                    // Assuming you have a DateTime object named 'yourDate' in your model or ViewBag
+                    // DateTime localDateTime = (DateTime)userCart.CreatedDate; // Replace 'Model.YourDate' with the appropriate property
+                    // DateTime utcDateTime = localDateTime.ToUniversalTime();
+
+                    DateTime utcDateTime = (DateTime)userR.OrderDate; // Replace 'Model.YourDate' with the appropriate property
+                    TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                    DateTime istDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, istTimeZone);
+                }
+
+                <td>@userR.OrderId</td>
+                <td>@userR.DisplayName</td>
+                <td>@userR.UserId</td>
+                <td>@userR.MobileNo</td>
+                <td>@userR.BuyerEmail</td>
+
+
+                <td>@userR.DiscountAmount</td>
+                <td>@userR.NetTotalAmount</td>
+                <td>@userR.PaymentMethod</td>
+                <td>@istDateTime.ToString("dd MMM yyyy h:mm:ss tt")</td>
+                <td>@userR.OrderStatus</td>
+
+            </tr>
+
+
+        }
+
+    </tbody>
+
+
+</table>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-outline-info @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-outline-info @nextDisabled">
+    Next
+</a>
+

@@ -1,0 +1,68 @@
+﻿@model PaginatedList<LedxLiveReport.Models.VwRegisteredUsersLive>
+
+@{
+}
+
+<h1>Registered User</h1>
+<input type="button"
+       value="Refresh"
+       onclick="location.href='@Url.Action("Index", "RegisteredUser")'" />
+<table class="table">
+    <thead>
+        <tr>
+
+
+            <th>ID</th>
+            <th>Name</th>
+            <th>UserId</th>
+            <th>Mobile No</th>
+            <th>UserEmail</th>
+            <th>UTM Campaign</th>
+            <th>RegistrationDate</th>
+
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var userR in Model)
+        {
+            <tr>
+
+                @{
+                    // Assuming you have a DateTime object named 'yourDate' in your model or ViewBag
+                    // DateTime localDateTime = (DateTime)userCart.CreatedDate; // Replace 'Model.YourDate' with the appropriate property
+                    // DateTime utcDateTime = localDateTime.ToUniversalTime();
+
+                    DateTime utcDateTime = (DateTime)userR.RegistrationDate; // Replace 'Model.YourDate' with the appropriate property
+                    TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                    DateTime istDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, istTimeZone);
+                }
+
+
+                <td>@userR.Id</td>
+                <td>@userR.DisplayName</td>
+                <td>@userR.UserId</td>
+                <td>@userR.MobileNo</td>
+                <td>@userR.UserEmail</td>
+                <td>@userR.UtmCampaign</td>
+                <td>@utcDateTime.ToString("dd MMM yyyy HH:mm:ss")</td>
+
+            </tr>
+
+
+        }
+
+    </tbody>
+
+
+</table>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-outline-info @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-outline-info @nextDisabled">
+    Next
+</a>

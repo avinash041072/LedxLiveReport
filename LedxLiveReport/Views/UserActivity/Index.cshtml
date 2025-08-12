@@ -1,0 +1,70 @@
+﻿@model PaginatedList<LedxLiveReport.Models.VwUserActivityLiveToday>
+
+@{
+}
+
+<h1>User Acitivty</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+
+
+            <th>Page Visited</th>
+            <th>UserId</th>
+            <th>DisplayName</th>
+            <th>Mobile No</th>
+          
+            <th>UtmCampaign</th>
+            <th>UserEmail</th>
+            <th>Visit Date</th>
+     
+
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var userR in Model)
+        {
+            <tr>
+                @{
+                    // Assuming you have a DateTime object named 'yourDate' in your model or ViewBag
+                    // DateTime localDateTime = (DateTime)userCart.CreatedDate; // Replace 'Model.YourDate' with the appropriate property
+                    // DateTime utcDateTime = localDateTime.ToUniversalTime();
+
+                    DateTime utcDateTime = (DateTime)userR.VisitDate; // Replace 'Model.YourDate' with the appropriate property
+                    TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                    DateTime istDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, istTimeZone);
+                }
+
+                <td>@userR.Permalink</td>
+                <td>@userR.UserId</td>
+                <td>@userR.DisplayName</td>
+                <td>@userR.MobileNo</td>
+           
+                <td>@userR.UtmCampaign</td>
+                <td>@userR.UserEmail</td>
+                <td>@istDateTime.ToString("dd MMM yyyy h:mm:ss tt")</td>
+            
+
+            </tr>
+
+
+        }
+
+    </tbody>
+
+
+</table>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-outline-info @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-outline-info @nextDisabled">
+    Next
+</a>
+
+

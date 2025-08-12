@@ -1,0 +1,38 @@
+﻿<Properties StartupConfiguration="{0D5FD938-C410-4375-981C-75CE72EC4C7F}|https">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.LedxLiveReport PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="LedxLiveReport/Models/ReportDataContext.cs">
+    <Files>
+      <File FileName="LedxLiveReport/Views/UserActivity/Index.cshtml" />
+      <File FileName="LedxLiveReport/Controllers/UserActivityController.cs" />
+      <File FileName="LedxLiveReport/Models/ReportDataContext.cs" Line="27" Column="125" />
+      <File FileName="LedxLiveReport/appsettings.json" Line="8" Column="130" />
+      <File FileName="LedxLiveReport/Models/VwUserCart.cs" Line="1" Column="1" />
+      <File FileName="LedxLiveReport/Program.cs" Line="3" Column="1" />
+      <File FileName="LedxLiveReport/Models/ErrorViewModel.cs" Line="1" Column="1" />
+      <File FileName="LedxLiveReport/Models/RegisteredUser.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="LedxLiveReport" expanded="True">
+            <Node name="LedxLiveReport" expanded="True">
+              <Node name="Dependencies" expanded="True">
+                <Node name="PackageDependencies" expanded="True" />
+              </Node>
+              <Node name="Controllers" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="ReportDataContext.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+</Properties>

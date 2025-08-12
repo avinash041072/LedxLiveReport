@@ -1,0 +1,68 @@
+﻿@model PaginatedList<LedxLiveReport.Models.VwEventUser>
+
+@{
+}
+
+<h1>Event User</h1>
+
+<h4>Total User : @ViewData["TotalCount"]  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Total User Free : @ViewData["FreeCount"] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Total User Paid : @ViewData["PaidCount"]</h4>
+<a href="@Url.Action("PaidUsers", "EventUser", new { pageNumber = "value1", paidUser = true })">Paid Users</a>
+
+
+<input type="button"
+       value="All Users"
+       onclick="location.href='@Url.Action("Index", "EventUser")'" />
+
+<table class="table">
+    <thead>
+        <tr>
+
+
+            <th>Event ID</th>
+            <th>UserId</th>
+            <th>Title</th>
+            <th>User Name</th>
+
+            <th>Mobile No</th>
+            <th>UserEmail</th>
+            <th>Type</th>
+            <th>Create Date</th>
+
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var userR in Model)
+        {
+            <tr>
+
+                <td>@userR.EventId</td>
+                <td>@userR.UserId</td>
+                <td>@userR.EventTitle</td>
+                <td>@userR.DisplayName</td>
+
+                <td>@userR.MobileNo</td>
+                <td>@userR.UserEmail</td>
+                <td>@userR.Status</td>
+                <td>@userR.CreatedDate</td>
+
+            </tr>
+
+
+        }
+
+    </tbody>
+
+
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-outline-info @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-outline-info @nextDisabled">
+    Next
+</a>

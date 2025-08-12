@@ -1,0 +1,56 @@
+﻿@model List<LedxLiveReport.Models.RegisteredUser>
+
+@{
+}
+<h1>Registered User</h1>
+
+@using (Html.BeginForm("index", "SearchUser", FormMethod.Post))
+{
+    @Html.TextBox("UserMail") 
+    <input type="submit" value="Search" />
+}
+
+
+
+<input type="text" name="txtsearch" />
+<table class="table">
+    <thead>
+        <tr>
+
+
+            <th>ID</th>
+            <th>Name</th>
+            <th>UserId</th>
+            <th>Mobile No</th>
+            <th>UserEmail</th>
+            <th>RegistrationDate</th>
+            <th>IsTest</th>
+            <th>City</th>
+            <th>State</th>
+
+        </tr>
+
+    </thead>
+    <tbody>
+        @foreach (var userR in Model)
+        {
+            <tr>
+
+                <td>@userR.Id</td>
+                <td>@userR.DisplayName</td>
+                <td>@userR.UserId</td>
+                <td>@userR.MobileNo</td>
+                <td>@userR.UserEmail</td>
+                <td>@userR.RegistrationDate</td>
+                <td>@userR.IsTestUser.ToString()</td>
+                <td>@userR.City.ToString()</td>
+                <td>@userR.State.ToString()</td>
+
+            </tr>
+
+
+        }
+    </tbody>
+
+
+</table>
