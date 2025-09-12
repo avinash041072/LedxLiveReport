@@ -1,19 +1,15 @@
 pipeline {
-  agent { label 'windows' }                 // your Windows agent
+  agent { label 'windows' }
   options { timestamps(); disableConcurrentBuilds() }
 
-  // For a classic single Pipeline job (not Multibranch), this makes pushes trigger builds:
-  triggers { githubPush() }                 // or: pollSCM('H/5 * * * *') if webhook not possible
-
   environment {
-  PROJECT     = 'LedxLiveReport/LedxLiveReport.csproj'
-  CONFIG      = 'Release'
-  PUBLISH_DIR = 'publish'
-  IIS_HOST    = 'localhost'            // <— change this
-  IIS_SITE    = 'api.ledx.digital'
-  HEALTH_URL  = ''                     // set to http://api.ledx.digital/health if you have one
-}
-
+    PROJECT     = 'LedxLiveReport/LedxLiveReport.csproj'
+    CONFIG      = 'Release'
+    PUBLISH_DIR = 'publish'
+    IIS_HOST    = 'localhost'            // since Jenkins is on the IIS server
+    IIS_SITE    = 'api.ledx.digital'
+    HEALTH_URL  = ''                     // set later if you have one
+  }
 
   stages {
     stage('Checkout') { steps { checkout scm } }
@@ -28,9 +24,8 @@ pipeline {
       }
     }
 
-    // First run keeps WHAT-IF; remove later for speed
+    // optional first-run validation; remove later
     stage('Deploy (what-if)') {
-      when { branch 'main' }
       steps {
         withCredentials([usernamePassword(credentialsId: 'msdeploy-ledx',
           usernameVariable: 'DEPLOY_USER', passwordVariable: 'DEPLOY_PASS')]) {
@@ -54,7 +49,6 @@ pipeline {
     }
 
     stage('Deploy (apply)') {
-      when { branch 'main' }                // <-- deploy only on pushes to main
       steps {
         withCredentials([usernamePassword(credentialsId: 'msdeploy-ledx',
           usernameVariable: 'DEPLOY_USER', passwordVariable: 'DEPLOY_PASS')]) {
@@ -78,7 +72,7 @@ pipeline {
     }
 
     stage('Health check') {
-      when { allOf { branch 'main'; expression { return env.HEALTH_URL?.trim() } } }
+      when { expression { return env.HEALTH_URL?.trim() } }  // only runs if set
       steps {
         powershell '''
           try {
@@ -91,7 +85,7 @@ pipeline {
   }
 
   post {
-    success { echo '✅ Build, publish, and deploy complete.' }
-    failure { echo '❌ Pipeline failed. See stage logs.' }
+    success { echo '✅ Build, publish, and msdeploy completed.' }
+    failure { echo '❌ Pipeline failed. Check logs above.' }
   }
 }
