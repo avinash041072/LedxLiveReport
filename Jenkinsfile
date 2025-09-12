@@ -30,20 +30,25 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'msdeploy-ledx',
           usernameVariable: 'DEPLOY_USER', passwordVariable: 'DEPLOY_PASS')]) {
           powershell '''
-            $msd = (Get-Command msdeploy.exe -ErrorAction SilentlyContinue).Source
-            if (-not $msd) {
-              foreach ($p in @(
-                "C:\\Program Files\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe",
-                "C:\\Program Files (x86)\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe"
-              )) { if (Test-Path $p) { $msd = $p; break } }
-            }
-            if (-not $msd) { throw "msdeploy.exe not found on agent." }
+  $msd = (Get-Command msdeploy.exe -ErrorAction SilentlyContinue).Source
+  if (-not $msd) {
+    foreach ($p in @(
+      "C:\\Program Files\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe",
+      "C:\\Program Files (x86)\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe"
+    )) { if (Test-Path $p) { $msd = $p; break } }
+  }
+  if (-not $msd) { throw "msdeploy.exe not found on agent." }
 
-            & $msd -verb:sync `
-              "-source:contentPath=$env:PUBLISH_DIR" `
-              "-dest:contentPath=$env:IIS_SITE,computerName=https://$($env:IIS_HOST):8172/MsDeploy.axd?site=$($env:IIS_SITE),userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASS,authType=Basic" `
-              -whatif -allowUntrusted
-          '''
+  # Resolve absolute path to the published output
+  $src = (Resolve-Path -LiteralPath $env:PUBLISH_DIR).Path
+  Write-Host "Deploying from $src"
+
+  & $msd -verb:sync `
+    "-source:contentPath=$src" `
+    "-dest:contentPath=$env:IIS_SITE,computerName=https://$($env:IIS_HOST):8172/MsDeploy.axd?site=$($env:IIS_SITE),userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASS,authType=Basic" `
+    -enableRule:AppOffline -usechecksum -retryAttempts:3 -retryInterval:2000 -allowUntrusted
+'''
+
         }
       }
     }
@@ -53,20 +58,25 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'msdeploy-ledx',
           usernameVariable: 'DEPLOY_USER', passwordVariable: 'DEPLOY_PASS')]) {
           powershell '''
-            $msd = (Get-Command msdeploy.exe -ErrorAction SilentlyContinue).Source
-            if (-not $msd) {
-              foreach ($p in @(
-                "C:\\Program Files\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe",
-                "C:\\Program Files (x86)\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe"
-              )) { if (Test-Path $p) { $msd = $p; break } }
-            }
-            if (-not $msd) { throw "msdeploy.exe not found on agent." }
+  $msd = (Get-Command msdeploy.exe -ErrorAction SilentlyContinue).Source
+  if (-not $msd) {
+    foreach ($p in @(
+      "C:\\Program Files\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe",
+      "C:\\Program Files (x86)\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe"
+    )) { if (Test-Path $p) { $msd = $p; break } }
+  }
+  if (-not $msd) { throw "msdeploy.exe not found on agent." }
 
-            & $msd -verb:sync `
-              "-source:contentPath=$env:PUBLISH_DIR" `
-              "-dest:contentPath=$env:IIS_SITE,computerName=https://$($env:IIS_HOST):8172/MsDeploy.axd?site=$($env:IIS_SITE),userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASS,authType=Basic" `
-              -enableRule:AppOffline -usechecksum -retryAttempts:3 -retryInterval:2000 -allowUntrusted
-          '''
+  # Resolve absolute path to the published output
+  $src = (Resolve-Path -LiteralPath $env:PUBLISH_DIR).Path
+  Write-Host "Deploying from $src"
+
+  & $msd -verb:sync `
+    "-source:contentPath=$src" `
+    "-dest:contentPath=$env:IIS_SITE,computerName=https://$($env:IIS_HOST):8172/MsDeploy.axd?site=$($env:IIS_SITE),userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASS,authType=Basic" `
+    -enableRule:AppOffline -usechecksum -retryAttempts:3 -retryInterval:2000 -allowUntrusted
+'''
+
         }
       }
     }
