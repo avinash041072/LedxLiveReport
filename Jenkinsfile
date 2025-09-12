@@ -6,13 +6,14 @@ pipeline {
   triggers { githubPush() }                 // or: pollSCM('H/5 * * * *') if webhook not possible
 
   environment {
-    PROJECT     = 'LedxLiveReport/LedxLiveReport.csproj'
-    CONFIG      = 'Release'
-    PUBLISH_DIR = 'publish'
-    IIS_HOST    = 'VMI809849'               // your IIS server
-    IIS_SITE    = 'api.ledx.digital'        // exact IIS site name
-    HEALTH_URL  = ''                        // set to http://api.ledx.digital/health if you have one
-  }
+  PROJECT     = 'LedxLiveReport/LedxLiveReport.csproj'
+  CONFIG      = 'Release'
+  PUBLISH_DIR = 'publish'
+  IIS_HOST    = 'localhost'            // <— change this
+  IIS_SITE    = 'api.ledx.digital'
+  HEALTH_URL  = ''                     // set to http://api.ledx.digital/health if you have one
+}
+
 
   stages {
     stage('Checkout') { steps { checkout scm } }
