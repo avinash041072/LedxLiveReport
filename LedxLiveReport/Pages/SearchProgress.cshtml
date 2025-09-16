@@ -1,0 +1,96 @@
+﻿@page
+@model SearchProgressModel
+@using System
+@using System.Linq
+@using LedxLiveReport.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="mb-3">
+    <h2 class="mb-2">Search Student Progress</h2>
+    <div class="text-muted">Enter one or more IDs or logins/emails (comma-separated). Example: <code>44524, 46756</code> or <code>alice@x.com,bob@x.com</code></div>
+</div>
+
+<form method="post" asp-antiforgery="true" class="mb-3">
+    <div class="row g-2 align-items-stretch">
+        <div class="col-12 col-lg-10">
+            <textarea asp-for="SearchTerm" rows="3" class="form-control form-control-lg"
+                      placeholder="Paste many IDs or logins/emails, separated by commas"></textarea>
+        </div>
+        <div class="col-12 col-lg-2 d-grid">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-lg flex-fill">Search</button>
+                <!-- NEW: Export button goes to OnPostExportAsync -->
+                <button type="submit" asp-page-handler="Export" class="btn btn-outline-secondary btn-lg flex-fill">
+                    Export
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+@{
+    var results = Model.Results ?? new List<StudentProgress>();
+    var hasResults = results.Count > 0;
+
+    var groups = results
+        .GroupBy(r => new { id = (r.user_id.ToString() ?? ""), login = r.user_login ?? "" })
+        .OrderBy(g => g.Key.login).ThenBy(g => g.Key.id).ToList();
+}
+
+@if (hasResults)
+{
+    @foreach (var g in groups)
+    {
+        var ordered = g
+          .OrderByDescending(x => { DateTime d; return DateTime.TryParse(x.last_completed_date, out d) ? d : DateTime.MinValue; })
+          .ThenBy(x => x.course_name ?? string.Empty)
+          .ToList();
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="fw-bold">
+                    @(string.IsNullOrWhiteSpace(g.Key.login) ? "(no login)" : g.Key.login)
+                    <span class="text-muted"> — ID: @g.Key.id</span>
+                </div>
+                <span class="badge text-bg-secondary">@g.Count() course@(g.Count() == 1 ? "" : "s")</span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width:44%;">Course</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-end">Completed</th>
+                            <th class="text-end">%</th>
+                            <th style="width:18%;">Last Completed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ordered)
+                        {
+                            DateTime parsed;
+                            var hasDate = DateTime.TryParse(item.last_completed_date, out parsed);
+                            <tr>
+                                <td>@item.course_name</td>
+                                <td class="text-end">@item.total_lessons</td>
+                                <td class="text-end">@item.completed_lessons</td>
+                                <td class="text-end">@item.completion_percent</td>
+                                <td>@(hasDate? parsed.ToString("yyyy-MM-dd HH:mm") : "")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}
+else if (Model.Results != null)
+{
+    <div class="text-muted">No results found.</div>
+}

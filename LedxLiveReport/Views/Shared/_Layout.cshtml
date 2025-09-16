@@ -1,61 +1,90 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var path = Context.Request.Path;
+    string IsActive(string segment) => path.StartsWithSegments(segment, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    var appName = "LedxLiveReport";
+}
+
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LedxLiveReport</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>@ViewData["Title"] - @appName</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Site theme -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LedxLiveReport.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">LedxLiveReport</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="RegisteredUser" asp-action="Index">Registered User</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="PaidUsers" asp-action="Index">Paid User</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UserCart" asp-action="Index">User Cart</a>
-                        </li>
-      
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UserActivity" asp-action="Index">Student Progress Report</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SearchUser" asp-action="Index">Search User</a>
-                        </li>
-                    </ul>
-                </div>
+    <!-- Top contact bar -->
+    <div class="topbar py-1 small">
+        <div class="container-xxl d-flex justify-content-between align-items-center">
+            <div class="d-flex gap-3">
+                <span><i class="bi bi-telephone me-1"></i> +91 88199 33387</span>
+                <span><i class="bi bi-envelope me-1"></i> support@ledx.law</span>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            <div>
+                <a class="topbar-link" href="#">Register / Login</a>
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - LedxLiveReport - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Main navbar -->
+    <nav class="navbar navbar-expand-lg mainnav">
+        <div class="container-xxl">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <img src="~/images/logo-ledx.svg" alt="LedX" height="28" onerror="this.style.display='none'">
+                <span class="brand-text">LedX Reports</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain"
+                    aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMain">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("/RegisteredUser")" asp-controller="RegisteredUser" asp-action="Index">Registered User</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("/PaidUsers")" asp-controller="PaidUsers" asp-action="Index">Paid User</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("/UserCart")" asp-controller="UserCart" asp-action="Index">User Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("/SearchProgress")" asp-page="/SearchProgress">Student Progress</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("/SearchUser")" asp-controller="SearchUser" asp-action="Index">Search User</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Optional page hero -->
+    @RenderSection("Hero", required: false)
+
+    <main class="page-wrap container-xxl py-4">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer py-4">
+        <div class="container-xxl small d-flex justify-content-between">
+            <span>© @DateTime.Now.Year LedX</span>
+            <span><a class="footer-link" asp-controller="Home" asp-action="Privacy">Privacy</a></span>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
-
