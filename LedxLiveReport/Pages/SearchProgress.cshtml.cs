@@ -91,11 +91,13 @@ public class SearchProgressModel : PageModel
             int r = 1;
             ws.Cell(r, 1).Value = "User ID";
             ws.Cell(r, 2).Value = "User Login";
-            ws.Cell(r, 3).Value = "Course";
-            ws.Cell(r, 4).Value = "Total";
-            ws.Cell(r, 5).Value = "Completed";
-            ws.Cell(r, 6).Value = "%";
-            ws.Cell(r, 7).Value = "Last Completed";
+            ws.Cell(r, 3).Value = "NicName";
+            ws.Cell(r, 4).Value = "Name";
+            ws.Cell(r, 5).Value = "Course";
+            ws.Cell(r, 6).Value = "Total";
+            ws.Cell(r, 7).Value = "Completed";
+            ws.Cell(r, 8).Value = "%";
+            ws.Cell(r, 9).Value = "Last Completed";
 
             var header = ws.Range(r, 1, r, 7);
             header.Style.Font.Bold = true;
@@ -105,33 +107,36 @@ public class SearchProgressModel : PageModel
             // Data
             foreach (var item in rows)
             {
+                
                 r++;
                 ws.Cell(r, 1).Value = item.user_id;
                 ws.Cell(r, 2).Value = item.user_login;
-                ws.Cell(r, 3).Value = item.course_name;
-                ws.Cell(r, 4).Value = item.total_lessons;
-                ws.Cell(r, 5).Value = item.completed_lessons;
+                ws.Cell(r, 3).Value = item.Nicname;
+                ws.Cell(r, 4).Value = item.Name;
+                ws.Cell(r, 5).Value = item.course_name;
+                ws.Cell(r, 6).Value = item.total_lessons;
+                ws.Cell(r, 7).Value = item.completed_lessons;
 
                 // Percent is a number like 52.27 in your API; keep as number with 2 decimals
-                ws.Cell(r, 6).Value = item.completion_percent;
-                ws.Cell(r, 6).Style.NumberFormat.Format = "0.00";
+                ws.Cell(r, 8).Value = item.completion_percent;
+                ws.Cell(r, 8).Style.NumberFormat.Format = "0.00";
 
                 // Try parse date to real Excel date/time
                 if (DateTime.TryParse(item.last_completed_date, out var dt))
                 {
-                    ws.Cell(r, 7).Value = dt;
-                    ws.Cell(r, 7).Style.DateFormat.Format = "yyyy-mm-dd hh:mm";
+                    ws.Cell(r, 9).Value = dt;
+                    ws.Cell(r, 9).Style.DateFormat.Format = "yyyy-mm-dd hh:mm";
                 }
                 else
                 {
-                    ws.Cell(r, 7).Value = item.last_completed_date ?? "";
+                    ws.Cell(r, 9).Value = item.last_completed_date ?? "";
                 }
             }
 
             // Autofit, freeze header, and add filter
             ws.Columns().AdjustToContents();
             ws.SheetView.FreezeRows(1);
-            ws.Range(1, 1, r, 7).SetAutoFilter();
+            ws.Range(1, 1, r, 9).SetAutoFilter();
 
             // Stream to browser
             using var stream = new MemoryStream();

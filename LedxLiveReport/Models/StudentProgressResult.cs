@@ -16,6 +16,8 @@ using System.Text.Json.Serialization;
     {
         public long user_id { get; set; }
         public string? user_login { get; set; }
+        public string? Nicname { get; set; }
+        public string? Name { get; set; }
         public long course_id { get; set; }
         public string? course_name { get; set; }
         public long total_lessons { get; set; }
